@@ -1,7 +1,8 @@
 // tslint:disable-next-line:import-blacklist
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { UserService } from './user.service';
 
 export interface IUser {
   name: string;
@@ -21,24 +22,47 @@ export interface IUser {
 
 export class AppComponent implements OnInit {
 
-  public userStream$: Observable<IUser[]>;
+  public usersStream$: Observable<IUser[]>;
 
   public myForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  public operationType: 'Create' | 'Update' = 'Create';
+
+  public searchText = new FormControl('');
+
+  private allUsers = [{
+    name: 'Arpit',
+    email: 'abc@gmail.com',
+    mobile: '1234567890',
+    gender: 'M',
+    city: 'Indore',
+    hobbies: ['game'],
+    address: 'Indore'
+  },
+  {
+    name: 'Mustafa',
+    email: 'abc@gmail.com',
+    mobile: '1234567890',
+    gender: 'M',
+    city: 'Indore',
+    hobbies: ['game'],
+    address: 'Indore'
+  }];
+
+  constructor(
+    private fb: FormBuilder,
+    private _userService: UserService
+  ) {
     this.myForm = this.createUserForm();
   }
 
   ngOnInit() {
-    this.userStream$ = Observable.of([{
-      name: 'Arpit',
-      email: 'abc@gmail.com',
-      mobile: '1234567890',
-      gender: 'M',
-      city: 'Indore',
-      hobbies: ['game'],
-      address: 'Indore'
-    }]);
+    this.usersStream$ = Observable.of(this.allUsers);
+
+    this.searchText.valueChanges.subscribe(value => {
+      const filteredUsers = this.allUsers.filter((user) => user.name.toLowerCase().includes(value));
+      this.usersStream$ = Observable.of(filteredUsers);
+    });
   }
 
   private createUserForm() {
@@ -55,5 +79,18 @@ export class AppComponent implements OnInit {
 
   public onSubmit(data) {
     console.log('the form data is :', data);
+    this._userService.createUser(data.value).subscribe((res) => {
+      console.log('the response is :', res);
+    });
+  }
+
+  public onUpdateUser(user) {
+    this.operationType = 'Update';
+    this.myForm = this.fb.group(user);
+    console.log('the user is :', user);
+  }
+
+  public onDeleteUser(user) {
+    console.log('the user is :', user);
   }
 }

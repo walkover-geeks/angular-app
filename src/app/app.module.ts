@@ -7,6 +7,8 @@ import { ModalModule } from 'ngx-bootstrap';
 import { AppComponent } from './app.component';
 import { CommonModule } from '../../node_modules/@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UserService } from './user.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,9 +20,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     AlertModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    HttpClientModule
   ],
-  providers: [],
+  providers: [UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

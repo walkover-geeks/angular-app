@@ -7,14 +7,14 @@
     <ul class="navbar-nav mr-auto">
     </ul>
     <form class="form-inline mt-2 mt-md-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+      <input class="form-control mr-sm-2" [formControl]="searchText" type="text" placeholder="Search" aria-label="Search">
     </form>
   </div>
 </nav>
 
 <div class="container-fluid" style="padding-top: 65px;">
   <p class="text-right">
-    <button class="btn btn-success" (click)="staticModal.show()">Add new</button>
+    <button class="btn btn-success" (click)="staticModal.show(); operationType = 'Create'">Add new</button>
   </p>          
   <table class="table table-bordered">
     <thead>
@@ -26,11 +26,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of userStream$ | async">
+      <tr *ngFor="let user of usersStream$ | async">
         <td>{{user.name}}</td>
         <td>{{user.mobile}}</td>
         <td>{{user.email}}</td>
-        <td>+ x</td>
+        <td>
+          <button class="btn btn-info btn-sm" (click)="onUpdateUser(user);staticModal.show()">Update</button>
+          <button class="btn btn-danger btn-sm" (click)="onDeleteUser(user)">Delete</button>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -40,7 +43,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 id="dialog-static-name" class="modal-title pull-left">Add user</h4>
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{operationType}} user</h4>
         <button type="button" class="close pull-right" aria-label="Close" (click)="staticModal.hide()">
           <span aria-hidden="true">&times;</span>
         </button>
