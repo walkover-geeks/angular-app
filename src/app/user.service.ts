@@ -8,11 +8,15 @@ export class UserService {
 
   constructor(private _http: HttpClient) {}
 
+  public getAllUsers() {
+    return this._http.get(API_URL + 'users');
+  }
+
   public createUser(user) {
-    return this._http.post(API_URL + 'user', user);
+    return this._http.post(API_URL + 'users', user);
   }
 
   public updateUser(user) {
-    return this._http.put(API_URL + 'user', user);
+    return this._http.put(API_URL + 'users', user);
   }
 }

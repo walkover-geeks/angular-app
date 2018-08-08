@@ -30,24 +30,7 @@ export class AppComponent implements OnInit {
 
   public searchText = new FormControl('');
 
-  private allUsers = [{
-    name: 'Arpit',
-    email: 'abc@gmail.com',
-    mobile: '1234567890',
-    gender: 'M',
-    city: 'Indore',
-    hobbies: ['game'],
-    address: 'Indore'
-  },
-  {
-    name: 'Mustafa',
-    email: 'abc@gmail.com',
-    mobile: '1234567890',
-    gender: 'M',
-    city: 'Indore',
-    hobbies: ['game'],
-    address: 'Indore'
-  }];
+  private allUsers = [];
 
   constructor(
     private fb: FormBuilder,
@@ -57,10 +40,17 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usersStream$ = Observable.of(this.allUsers);
+
+    this._userService.getAllUsers().subscribe((res: IUser[]) => {
+      if (res && res.length) {
+        this.allUsers = res;
+        this.usersStream$ = Observable.of(this.allUsers);
+      }
+    });
+
 
     this.searchText.valueChanges.subscribe(value => {
-      const filteredUsers = this.allUsers.filter((user) => user.name.toLowerCase().includes(value));
+      const filteredUsers = this.allUsers.filter((user: IUser) => user.name.toLowerCase().includes(value));
       this.usersStream$ = Observable.of(filteredUsers);
     });
   }
@@ -84,13 +74,13 @@ export class AppComponent implements OnInit {
     });
   }
 
-  public onUpdateUser(user) {
+  public onUpdateUser(user: IUser) {
     this.operationType = 'Update';
     this.myForm = this.fb.group(user);
     console.log('the user is :', user);
   }
 
-  public onDeleteUser(user) {
+  public onDeleteUser(user: IUser) {
     console.log('the user is :', user);
   }
 }
