@@ -1,0 +1,15 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 id="dialog-static-name" class="modal-title pull-left">{{operationType}} user</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="staticModal.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <h2>{{confirmationMessage}}</h2>
+      <button (click)="onConfirmation(true)">Yes</button>
+      <button (click)="onConfirmation(false)">No</button>
+    </div>
+  </div>
+</div>

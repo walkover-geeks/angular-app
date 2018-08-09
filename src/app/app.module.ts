@@ -9,10 +9,17 @@ import { CommonModule } from '../../node_modules/@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from './user.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ConfirmationComponent } from './modals/confirmation/confirmation.component';
+import { AppRoutingModule } from './app-routing.module';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    UserComponent,
+    ConfirmationComponent,
+    WelcomeComponent
   ],
   imports: [
     BrowserModule,
@@ -21,7 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     AlertModule.forRoot(),
     ModalModule.forRoot(),
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [UserService],
   bootstrap: [AppComponent]
