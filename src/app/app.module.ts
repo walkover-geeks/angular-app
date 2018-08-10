@@ -1,7 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-import { AlertModule } from 'ngx-bootstrap';
 import { ModalModule } from 'ngx-bootstrap';
 
 import { AppComponent } from './app.component';
@@ -13,6 +11,7 @@ import { ConfirmationComponent } from './modals/confirmation/confirmation.compon
 import { AppRoutingModule } from './app-routing.module';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { UserComponent } from './user/user.component';
+import { AuthGuard } from './auth/auth.guard';
 
 @NgModule({
   declarations: [
@@ -26,12 +25,11 @@ import { UserComponent } from './user/user.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    AlertModule.forRoot(),
     ModalModule.forRoot(),
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [UserService],
+  providers: [UserService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

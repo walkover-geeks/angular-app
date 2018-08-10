@@ -3,60 +3,57 @@
     <input class="form-control mr-sm-2" [formControl]="searchText" type="text" placeholder="Search users" aria-label="Search">
   </div>
   <div class="text-right col-10">
-    <button class="btn btn-success" (click)="staticModal.show(); operationType = 'Create'">Add new</button>
+    <button class="btn btn-success" (click)="createNewUser()">Add new</button>
   </div>
-</div>          
+</div>
 <table class="table table-bordered">
   <thead>
     <tr>
       <th>Name</th>
-      <th>Mobile</th>
       <th>Email</th>
-      <th>Action</th>
+      <th>City</th>
+      <th width="200px">Action</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let user of usersStream$ | async">
       <td>{{user.name}}</td>
-      <td>{{user.mobile}}</td>
       <td>{{user.email}}</td>
+      <td>{{user.city}}</td>
       <td>
-        <button class="btn btn-info btn-sm" (click)="onUpdateUser(user);staticModal.show()">Update</button>
+        <button class="btn btn-info btn-sm" (click)="onUpdateUser(user);userFormModal.show()">Update</button>
         <button class="btn btn-danger btn-sm" (click)="onDeleteUser(user);confirmationModal.show()">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
 
-<div class="modal" bsModal #staticModal="bs-modal" [config]="{backdrop: 'static', animated: false}" tabindex="-1" role="dialog" aria-labelledby="dialog-static-name">
+<div class="modal" bsModal #userFormModal="bs-modal" [config]="{backdrop: 'static', animated: false}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h4 id="dialog-static-name" class="modal-title pull-left">{{operationType}} user</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="staticModal.hide()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)" autocomplete="off">
+      <form [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)" autocomplete="off">
+        <div class="modal-header">
+          <h4 id="dialog-static-name" class="modal-title pull-left">{{operationType}} user</h4>
+          <button type="button" class="close pull-right" aria-label="Close" (click)="userFormModal.hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
           <div class="form-group">
             <label for="name">Name:</label>
             <input type="text" class="form-control" id="name" formControlName="name">
-            <p class="error" *ngIf="myForm.get('name').touched && myForm.get('name').hasError('required')">
+            <p class="text-danger" *ngIf="myForm.get('name').touched && myForm.get('name').hasError('required')">
               Oops, please provide a name!
             </p>
           </div>
           <div class="form-group">
             <label for="email">Email:</label>
             <input type="text" class="form-control" id="email" formControlName="email">
-          </div>
-          <div class="form-group">
-            <label for="mobile">Mobile:</label>
-            <input type="text" class="form-control" id="mobile" formControlName="mobile">
-          </div>
-          <div class="form-group">
-            <label for="gender">Gender:</label>
-            <input type="text" class="form-control" id="gender" formControlName="gender">
+            <p class="text-danger" *ngIf="myForm.get('email').touched && myForm.get('email').hasError('required')">
+              Please provide email.
+            </p>
           </div>
           <div class="form-group">
             <label for="city">City:</label>
@@ -68,15 +65,26 @@
           </div>
           <div class="form-group">
             <label for="address">Address:</label>
-            <input type="text" class="form-control" id="address" formControlName="address">
+            <textarea type="text" class="form-control" id="address" formControlName="address"></textarea>
+            <p class="text-danger" *ngIf="myForm.get('address').touched && myForm.get('address').hasError('required')">
+              Please provide address.
+            </p>
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-      </div>
+
+        </div>
+        <div class="modal-footer">
+          <button 
+            type="submit"
+            class="btn btn-primary btn-block"
+            [disabled]="myForm.get('name').hasError('required') || myForm.get('email').hasError('required') || myForm.get('address').hasError('required')"
+            >Submit</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
 
-<div class="modal" bsModal #confirmationModal="bs-modal" [config]="{backdrop: 'static', animated: false}" tabindex="-1" role="dialog" aria-labelledby="dialog-static-name">
+<div class="modal" bsModal #confirmationModal="bs-modal" [config]="{backdrop: 'static', animated: false}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
   <app-confirmation-component [confirmationMessage]="confirmationMessage" (userChoice)="onConfirmation($event)"></app-confirmation-component>
 </div>

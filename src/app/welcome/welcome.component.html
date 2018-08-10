@@ -4,7 +4,8 @@
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
   </div>
   <label for="inputEmail" class="sr-only">Mobile number</label>
-  <input [formControl]="mobile" type="email" id="inputEmail" class="form-control" placeholder="Mobile number" required autofocus>
+  <input autocomplete="off" [formControl]="mobile" type="email" id="inputEmail" class="form-control" placeholder="Mobile number" required autofocus>
+  <small class="text-danger" *ngIf="mobile.invalid && (mobile.dirty || mobile.touched)">Please enter a valid mobile number</small>
   <br>
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  <button [disabled]="mobile.invalid && (mobile.dirty || mobile.touched)" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 </form>

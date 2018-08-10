@@ -1,10 +1,9 @@
-
 // tslint:disable-next-line:import-blacklist
 import { Observable } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import { IUser } from '../interface/User';
-import { BsModalRef } from 'ngx-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap';
 import { UserService } from '../user.service';
 
 @Component({
@@ -29,10 +28,13 @@ export class UserComponent implements OnInit {
 
   private selectedUser: IUser;
 
-  @ViewChild('confirmationModal') public confirmationModal: BsModalRef;
+  private userMobile: string;
+
+  @ViewChild('confirmationModal') public confirmationModal: ModalDirective;
+  @ViewChild('userFormModal') public userFormModal: ModalDirective;
 
   constructor(
-    private fb: FormBuilder,
+    private _fb: FormBuilder,
     private _userService: UserService
   ) {
     this.myForm = this.createUserForm();
@@ -40,7 +42,9 @@ export class UserComponent implements OnInit {
 
   ngOnInit() {
 
-    this.getAllUsers();
+    this.userMobile = localStorage.getItem('mobile');
+
+    this.getAllUsers(this.userMobile);
 
     this.searchText.valueChanges.subscribe(value => {
       const filteredUsers = this.allUsers.filter((user: IUser) => user.name.toLowerCase().includes(value));
@@ -49,20 +53,18 @@ export class UserComponent implements OnInit {
   }
 
   private createUserForm() {
-    return this.fb.group({
+    return this._fb.group({
       name: ['', Validators.required],
-      email: '',
-      mobile: '',
-      gender: '',
+      email: ['', Validators.required],
       city: '',
       hobbies: '',
-      address: '',
+      address: ['', Validators.required],
     });
   }
 
-  private getAllUsers() {
-    this._userService.getAllUsers().subscribe((res: IUser[]) => {
-      if (res && res.length) {
+  private getAllUsers(mobile: string) {
+    this._userService.getAllUsers(mobile).subscribe((res: IUser[]) => {
+      if (res) {
         this.allUsers = res;
         this.usersStream$ = Observable.of(this.allUsers);
       }
@@ -71,14 +73,25 @@ export class UserComponent implements OnInit {
 
   public onSubmit(data) {
     console.log('the form data is :', data);
-    this._userService.createUser(data.value).subscribe((res) => {
-      console.log('the response is :', res);
-    });
+    if (this.operationType === 'Update') {
+      this._userService.updateUser(this.userMobile, data.value).subscribe((res) => {
+        console.log('the response is :', res);
+        this.userFormModal.hide();
+        this.getAllUsers(this.userMobile);
+      });
+    } else {
+      this._userService.createUser(this.userMobile, data.value).subscribe((res) => {
+        console.log('the response is :', res);
+        this.userFormModal.hide();
+        this.getAllUsers(this.userMobile);
+      });
+    }
+
   }
 
   public onUpdateUser(user: IUser) {
     this.operationType = 'Update';
-    this.myForm = this.fb.group(user);
+    this.myForm = this._fb.group(user);
     console.log('the user is :', user);
   }
 
@@ -90,11 +103,18 @@ export class UserComponent implements OnInit {
 
   public onConfirmation(data: boolean) {
     if (data) {
-      this._userService.deleteUser(this.selectedUser.id).subscribe((res) => {
+      this._userService.deleteUser(this.userMobile, this.selectedUser.id).subscribe((res) => {
         console.log('the delete response is :', res);
-        this.getAllUsers();
+        this.getAllUsers(this.userMobile);
       });
     }
     this.confirmationModal.hide();
+  }
+
+  public createNewUser() {
+    this.userFormModal.show();
+    this.operationType = 'Create';
+    this.myForm = this.createUserForm();
+    this.selectedUser = null;
   }
 }
